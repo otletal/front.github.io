@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DefWork - IT & Business Simulator</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Верхняя панель с аватаром и балансом -->
+    <header>
+        <div class="user-info" onclick="openProfileModal()">
+            <div class="avatar-badge">👨‍💻</div>
+            <div class="user-meta">
+                <span id="user-display">@def_worker</span>
+                <span class="user-status">● Online</span>
+            </div>
+        </div>
+        <div class="balance-container">
+            <div class="balance-row">
+                <span class="coin-icon">₽</span>
+                <span id="balance-display">0</span>
+            </div>
+            <div id="passive-display">⚡ +0 ₽/сек</div>
+        </div>
+    </header>
+
+    <div class="content">
+
+        <!-- 1. ГЛАВНЫЙ ЭКРАН (ТАПЕР) -->
+        <div id="tab-tap" class="section active">
+            
+            <!-- Карточка ранга с иконкой -->
+            <div class="rank-card">
+                <div class="rank-header">
+                    <div class="rank-icon-box">🏆</div>
+                    <div class="rank-info">
+                        <div class="rank-label">Карьерный уровень</div>
+                        <div id="rank-title-display" class="rank-title">Новичок-кликер 💀</div>
+                    </div>
+                    <div id="rank-counter-display" class="rank-counter">0 / 25k</div>
+                </div>
+                <div class="progress-track">
+                    <div id="rank-progress-bar" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Центральная кибер-кнопка -->
+            <div class="tap-arena">
+                <div class="tap-glow-ring"></div>
+                <button id="tap-button">
+                    <div class="tap-emoji">💻</div>
+                    <div class="tap-label">КОДИТЬ</div>
+                    <div class="tap-sub">+<span id="click-power-display">1</span> ₽</div>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- 2. РАЗВИТИЕ / БИЗНЕСЫ -->
+        <div id="tab-earn" class="section">
+            <div class="section-header">
+                <h3 id="earn-main-title">🚀 Развитие и капитал</h3>
+                <button id="earn-back-btn" class="btn btn-back" style="display: none;" onclick="closeEarnSubMenu()">⬅ Назад</button>
+            </div>
+
+            <div id="earn-switcher-stack" class="switcher-stack">
+                <button class="menu-banner-btn" onclick="switchEarnTab('business')">
+                    <div class="banner-left">
+                        <div class="icon-box blue">🏢</div>
+                        <div class="menu-banner-content">
+                            <span class="menu-banner-title">Покупка бизнесов</span>
+                            <span class="menu-banner-subtitle">Создание пассивных активов</span>
+                        </div>
+                    </div>
+                    <span class="arrow-badge">❯</span>
+                </button>
+
+                <button class="menu-banner-btn" onclick="switchEarnTab('my_business')">
+                    <div class="banner-left">
+                        <div class="icon-box purple">📊</div>
+                        <div class="menu-banner-content">
+                            <span class="menu-banner-title">Управление портфелем</span>
+                            <span class="menu-banner-subtitle">Апгрейд, найм штата и реклама</span>
+                        </div>
+                    </div>
+                    <span class="arrow-badge">❯</span>
+                </button>
+
+                <button class="menu-banner-btn" onclick="switchEarnTab('farms')">
+                    <div class="banner-left">
+                        <div class="icon-box green">💼</div>
+                        <div class="menu-banner-content">
+                            <span class="menu-banner-title">IT-контракты</span>
+                            <span class="menu-banner-subtitle">Потоковые заказы с фриланса</span>
+                        </div>
+                    </div>
+                    <span class="arrow-badge">❯</span>
+                </button>
+
+                <button class="menu-banner-btn" onclick="switchEarnTab('click_upgrades')">
+                    <div class="banner-left">
+                        <div class="icon-box orange">⌨️</div>
+                        <div class="menu-banner-content">
+                            <span class="menu-banner-title">Апгрейд рабочего места</span>
+                            <span class="menu-banner-subtitle">Мощное железо и ИИ-инструменты</span>
+                        </div>
+                    </div>
+                    <span class="arrow-badge">❯</span>
+                </button>
+
+                <button class="menu-banner-btn" onclick="switchEarnTab('investments')">
+                    <div class="banner-left">
+                        <div class="icon-box gold">📈</div>
+                        <div class="menu-banner-content">
+                            <span class="menu-banner-title">Биржа и Криптовалюты</span>
+                            <span class="menu-banner-subtitle">Акции корпораций и трейдинг</span>
+                        </div>
+                    </div>
+                    <span class="arrow-badge">❯</span>
+                </button>
+            </div>
+
+            <div id="earn-business" style="display: none;">
+                <h4 class="sub-heading">🏢 Доступные компании</h4>
+                <div id="business-container"></div>
+            </div>
+
+            <div id="earn-my_business" style="display: none;">
+                <h4 class="sub-heading">📊 Мои активы</h4>
+                <div id="my-business-container"></div>
+            </div>
+
+            <div id="earn-farms" style="display: none;">
+                <h4 class="sub-heading">💼 Биржа IT-контрактов</h4>
+                <div id="farms-container"></div>
+            </div>
+
+            <div id="earn-click_upgrades" style="display: none;">
+                <h4 class="sub-heading">⌨️ Оборудование и софт</h4>
+                <div id="click-upgrades-container"></div>
+            </div>
+
+            <div id="earn-investments" style="display: none;">
+                <h4 class="sub-heading">🏛️ Фондовый рынок (Дивиденды)</h4>
+                <div id="invest-stocks-container"></div>
+                <h4 class="sub-heading" style="margin-top: 20px;">🪙 Криптобиржа (Волатильность)</h4>
+                <div id="invest-crypto-container"></div>
+            </div>
+        </div>
+
+        <!-- 3. ВКЛАДКА КЕЙСЫ И СУНДУКИ -->
+        <div id="tab-cases" class="section">
+            <h3 class="section-title">🎁 Ежедневный сундук</h3>
+            <div class="card highlight-card" style="flex-direction: column; align-items: stretch; text-align: center; padding: 16px;">
+                <div style="font-size: 38px; margin-bottom: 6px;" id="daily-chest-icon">🎁</div>
+                <h4>Сундук разработчика</h4>
+                <p style="color: var(--accent-blue); margin-bottom: 12px;">Открывай раз в 24 часа! Награда: 10% от текущего баланса.</p>
+                <button class="btn btn-green" id="daily-chest-btn" style="width: 100%; padding: 10px;" onclick="openDailyChest()">Открыть сундук</button>
+            </div>
+
+            <h3 class="section-title" style="margin-top: 20px;">📦 Магазин кейсов</h3>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">5 кейсов за игровую валюту (₽) и 5 премиум-кейсов за Звезды Telegram (⭐).</div>
+            <div id="cases-shop-container"></div>
+        </div>
+
+        <!-- 4. НАГРАДЫ / АЧИВКИ -->
+        <div id="tab-achievements" class="section">
+            <h3 class="section-title">🎁 Ежедневный бонус</h3>
+            <div class="card highlight-card">
+                <div class="card-left">
+                    <div class="icon-box gold">🎁</div>
+                    <div class="card-info">
+                        <h4>Сундук разработчика</h4>
+                        <p style="color: var(--accent-blue);">Доступен каждые 24 часа (10% от баланса)</p>
+                    </div>
+                </div>
+                <button class="btn btn-green" id="daily-btn" onclick="openDailyChest()">Забрать</button>
+            </div>
+
+            <h3 class="section-title" style="margin-top: 18px;">🏆 Достижения</h3>
+            <div id="achievements-container"></div>
+        </div>
+
+        <!-- 5. РЕЙТИНГ -->
+        <div id="tab-leaderboard" class="section">
+            <h3 class="section-title">🥇 Топ IT-магнатов</h3>
+            <div id="leaderboard-list"></div>
+        </div>
+
+        <!-- 6. СКИНЫ -->
+        <div id="tab-skins" class="section">
+            <h3 class="section-title">🎨 Внешний вид терминала</h3>
+            <div id="skins-container"></div>
+        </div>
+
+    </div>
+
+    <!-- Нижняя навигация -->
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('tap', this)">
+            <div class="nav-icon">💻</div>
+            <span>Тап</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('earn', this)">
+            <div class="nav-icon">🚀</div>
+            <span>Развитие</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('cases', this)">
+            <div class="nav-icon">🎁</div>
+            <span>Кейсы</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('achievements', this)">
+            <div class="nav-icon">🏆</div>
+            <span>Награды</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('leaderboard', this)">
+            <div class="nav-icon">🥇</div>
+            <span>Топ</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('skins', this)">
+            <div class="nav-icon">🎨</div>
+            <span>Скины</span>
+        </button>
+    </nav>
+
+    <!-- Модальное окно профиля -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-avatar">👨‍💻</div>
+            <h3>Профиль разработчика</h3>
+            <p>Забирай ежедневные награды и следи за ростом своего капитала.</p>
+            <button class="btn btn-green" style="width: 100%; margin-top: 12px;" onclick="openDailyChest()">🎁 Ежедневный бонус (10%)</button>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeProfileModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно рулетки кейса -->
+    <div id="case-modal" class="case-modal">
+        <div class="case-opening-box">
+            <h3 id="case-modal-title" style="margin-top:0; color: var(--accent-blue);">Открытие кейса</h3>
+            <div class="case-roulette-window">
+                <div class="roulette-pointer"></div>
+                <div id="roulette-track" class="case-roulette-track"></div>
+            </div>
+            <div id="case-win-result" style="font-size: 15px; font-weight: 800; color: var(--accent-green); margin-bottom: 14px; min-height: 22px;"></div>
+            <button class="btn btn-green" id="case-close-btn" style="width: 100%; display: none;" onclick="closeCaseModal()">Забрать награду</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
